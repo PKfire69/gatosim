@@ -28,12 +28,13 @@ ROLES TODAY:
 # ---------------------------------------------------------------------------
 # Names: Parker Karlen, Hamid Eyyubov
 DECK = {
-    "shadowknight": {
+    "ShadowKnight": {
         "description": "A phantom clad in obsidian armor, he strikes from the city's dark alleys before his targets even know he exists. Corrupt warlords whisper his name in fear, knowing no shield can block a blade born of shadow.",
         "attacks": {
-            "Dark Blade Slash(1)": "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact."
-            "archive",
-            "east": "office",
+            "Dark Blade Slash(1)": [
+                "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact.",
+                200,
+            ],
         },
         "action": ["attack", "defend"],
         "health": 1000,
@@ -41,16 +42,23 @@ DECK = {
     },
     # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.:w
     "Meepo": {
-        "description": "is a cave elf that summons 5 copies of himself to fight from every front.",
+        "description": "Meepo is a magical cave elf that summons 5 copies of himself to fight from every front.",
         "attacks": {
-            "Earth Bind": {
-                "tosses a net at an enemy stopping them keeping them from play for one turn"
-            },
-            "Divided We Stand": {},
-            "items": ["sticky note", "paperclip"],
+            "Earth Bind": [
+                "tosses a net at an enemy stopping them keeping them from play for one turn",
+                100,
+            ],
+            "Divided We Stand": [],
         },
     },
 }
+
+
+def spew(deck, state):
+    print(deck["ShadowKnight"]["description"])
+    print(deck["Meepo"]["description"])
+    print(deck["Meepo"]["attacks"]["Earth Bind"])
+    print(deck["Shadow Knight"]["health"])
 
 
 # ---------------------------------------------------------------------------
