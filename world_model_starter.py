@@ -61,6 +61,8 @@ def spew(deck, state):
     print(deck["Shadow Knight"]["health"])
 
 
+# My teamate and I argued over if we should use a list or a dictionary item within the attacks dictionary. We came to the conclusion that we would use a list and its index to display attack information which will be used in game.
+
 # ---------------------------------------------------------------------------
 # One function that reads the model. Write yours for your project.
 # ---------------------------------------------------------------------------
