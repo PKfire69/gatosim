@@ -27,17 +27,21 @@ ROLES TODAY:
 # possible: they can rely on "description" and "exits" being there.
 # ---------------------------------------------------------------------------
 # Names: Parker Karlen, Hamid Eyyubov
+
+
+
 DECK = {
     "ShadowKnight": {
         "description": "A phantom clad in obsidian armor, he strikes from the city's dark alleys before his targets even know he exists. Corrupt warlords whisper his name in fear, knowing no shield can block a blade born of shadow.",
         "attacks": {
-            "Dark Blade Slash(1)": [
+            "Dark Blade Slash": [
                 "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact.",
                 200,
             ],
         },
         "action": ["attack", "defend"],
         "health": 1000,
+        "transitions": ["Meepo", "FireMage"]
         "mode": True,
     },
     # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.:w
@@ -50,7 +54,34 @@ DECK = {
             ],
             "Divided We Stand": [],
         },
+        "action": ["attack", "defend"],
+        "health": 800,
+        "transitions": ["ShadowKnight", "IceWizard"]
     },
+
+
+    "FireMage": {
+        "description": "A mage who attacks with fire",
+        "attacks": {
+            "GoldenHeart": [
+                "Throws a ball of fire at the enemy",
+                150
+            ]
+        },
+        "action": ["attack", "defend"],
+        "health": 700,
+        "transitions": ["ShadowKnight", "StoneGolem"]
+    },
+
+    "IceWizard": {
+        "description": "A wizard who uses ice to slow enemies"
+        "attacks": {
+    "Ice Blast": [
+        "Launches an icy blast at the enemy.",
+        120
+    ]
+},
+    }
 }
 
 
