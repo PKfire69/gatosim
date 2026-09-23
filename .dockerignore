@@ -1,0 +1,5 @@
+*
+!Dockerfile
+!pyproject.toml
+!world_model_starter.py
+!test_world_model_starter.py
