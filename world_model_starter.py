@@ -84,6 +84,34 @@ DECK = {
     }
 }
 
+def draw_card():
+    pass
+
+def attack():
+    pass
+class player:
+    def __init__(self, name):
+        self.name = name
+        self.score = 0
+
+class card_dual:
+    def __init__(self, name, description, health):
+        self.name = name
+        self.description = description
+        self.health = health
+
+print("Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game")
+print("Press y to continue:")
+while(input()!= 'y'):
+    continue
+print("----------------------------------------------------------------------------")
+print("You and your opponent will start the game by each drawing one card from a deck of 10 different characters, each with their own attacks and story")
+print("You and your opponent will take turns making two options; Attack or Defend.")
+print("each card has a set number of health that will you must devalue to 0.The first player to defeat 5 characters will be deemed the winner of the game")
+print("Enter play to start the game")
+while input() != 'play':
+    continue
+
 
 def spew(deck, state):
     print(deck["ShadowKnight"]["description"])
