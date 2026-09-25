@@ -241,11 +241,9 @@ def main():
     keep_playing = True
     while keep_playing:
         print("Enter Play ones name:")
-        player1 = input()
-        player(player1)
+        player1 = player(input())
         print("Enter player twos name:")
-        player2 = input()
-        player(player2)
+        player2 = player(input())
         hand1 = []
         hand2 = []
         for i in range(3):
@@ -257,26 +255,24 @@ def main():
             print("please try again")
             continue
         print(f"{player2} you have drawn: {hand2}")
-        while player1.score() < 5 and player2.score() < 5:
-            print(f'{player1.name()}, choose a character to attack or defend with\n your options are {hand1}')
+        while player1.score < 5 and player2.score < 5:
+            print(
+                f"{player1.name}, choose a character to attack or defend with\n your options are {hand1}"
+            )
             player1choice = input()
             while player1choice not in hand1:
-                print('Please enter a valid name from the given list')
+                print("Please enter a valid name from the given list")
                 print(hand1)
                 player1choice = input()
-            print('Do you want to defend(0) or attack(1)')
+            print("Do you want to defend(0) or attack(1)")
             action1 = input()
-            while action1 != 0 or 1:
-                print('please enter 0 for defend or 1 for attack:')
+            while action1 != "0" and action1 != "1":
+                print("please enter 0 for defend or 1 for attack:")
                 action1 = input()
-            if action == 1:
-                print DECK['player1choice']['attacks']
+            if action1 == "1":
+                print(DECK[player1choice]["attacks"])
             else:
-                print DECK['player1choice']['defend'] 
-
-
-
-
+                print(DECK[player1choice]["defend"])
 
 
 def spew(deck, state):
