@@ -51,7 +51,7 @@ DECK = {
         },
         "mode": True,
     },
-    # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.:w
+    # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.
     "Meepo": {
         "description": "Meepo is a magical cave elf that summons 5 copies of himself to fight from every front.",
         "attacks": {
@@ -197,6 +197,12 @@ def attack(attacker, opponent, attack_name):
     return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
 
 
+def promptcontinue(zero):
+    while input() != "1":
+        print("please try again")
+        continue
+
+
 class player:
     def __init__(self, name):
         self.name = name
@@ -229,10 +235,48 @@ def main():
     )
     print("Enter play to start the game")
     while input() != "play":
-        Print("Something went wrong: Type play")
+        print("Something went wrong: Type play")
         continue
-    print("Enter Player 1s name")
     describe(DECK, draw_card()["name"])
+    keep_playing = True
+    while keep_playing:
+        print("Enter Play ones name:")
+        player1 = input()
+        player(player1)
+        print("Enter player twos name:")
+        player2 = input()
+        player(player2)
+        hand1 = []
+        hand2 = []
+        for i in range(3):
+            hand1.append(draw_card()["name"])
+            hand2.append(draw_card()["name"])
+        print(f"{player1} you have drawn: {hand1}")
+        print("press 1 to continue")
+        while input() != "1":
+            print("please try again")
+            continue
+        print(f"{player2} you have drawn: {hand2}")
+        while player1.score() < 5 and player2.score() < 5:
+            print(f'{player1.name()}, choose a character to attack or defend with\n your options are {hand1}')
+            player1choice = input()
+            while player1choice not in hand1:
+                print('Please enter a valid name from the given list')
+                print(hand1)
+                player1choice = input()
+            print('Do you want to defend(0) or attack(1)')
+            action1 = input()
+            while action1 != 0 or 1:
+                print('please enter 0 for defend or 1 for attack:')
+                action1 = input()
+            if action == 1:
+                print DECK['player1choice']['attacks']
+            else:
+                print DECK['player1choice']['defend'] 
+
+
+
+
 
 
 def spew(deck, state):
