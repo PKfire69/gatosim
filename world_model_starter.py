@@ -164,44 +164,17 @@ DECK = {
         },
     },
 }
-def playerturn(player1,player2, attackerhand, opponenthand):
-    print(f"{player1.name}, choose a character to attack or defend with\n your options are {attackerhand['name']}")
-    player1choice = input()
-    while player1choice not in attackerhand:
-        print("please enter a valid name from the given list")
-        print(attackerhand)
-        player1choice = input()
-    for card in attackerhand:
-        if card == 
-    print("do you want to defend(0) or attack(1)")
-    action1 = input()
-    while action1 != "0" and action1 != "1":
-        print("please enter 0 for defend or 1 for attack:")
-        action1 = input()
-    if action1 == "1":
-        print(DECK[player1choice]["attacks"])
-        print('enter the which attack you would like to execute above')
-        attack(input())
-        while attack not in list(DECK[player1choice]['attacks']):
-            print('please type a valid attack from the list below')
-            print(list(DECK[player1choice]['attacks']))
-            attack = input()
-        print('Choose who you want to attack from the list below')
-        print(opponenthand['name'])
-        oppcard = input()
-        while oppcard not in opponenthand:
-            print('Please enter a valid choice from the list above:')
-            oppcard = input()
-        variable = attack(attackerhand[player1choice],opponenthand[oppcard],attack)
-        print(variable)
-
 def is_dead(hand1,hand2):
+
+
+def is_dead(hand1, hand2):
     pass
+
 
 def draw_card(name=None):
     if name is None:
         name = random.choice(list(DECK))
-    card = deepcopy(DECK[name   ])
+    card = deepcopy(DECK[name])
     card["name"] = name
     card["defending"] = False
     return card
