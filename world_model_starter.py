@@ -229,7 +229,7 @@ def main():
     )
     print("Enter play to start the game")
     while input() != "play":
-        Print("Something went wrong: Type play")
+        print("Something went wrong: Type play")
         continue
     print("Enter Player 1s name")
     describe(DECK, draw_card()["name"])
@@ -247,7 +247,6 @@ def spew(deck, state):
 
 
 def describe(world, state):
-    """Print one state: its description, its exits, and what is there."""
     card = world[state]
     print(state.upper())
     print(card["description"])
