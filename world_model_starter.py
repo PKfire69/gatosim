@@ -21,8 +21,8 @@ ROLES TODAY:
   drives. The third navigates and will be today's scribe.
 """
 
-from copy import deepcopy
 import random
+from copy import deepcopy
 
 # ---------------------------------------------------------------------------
 # The model. A dictionary of states, each holding a dictionary of details.
@@ -30,7 +30,6 @@ import random
 # possible: they can rely on "description" and "exits" being there.
 # ---------------------------------------------------------------------------
 # Names: Parker Karlen, Hamid Eyyubov
-
 
 
 BASE_HIT_CHANCE = 0.80
@@ -72,16 +71,9 @@ DECK = {
             "hit_chance_reduction": 0.35,
         },
     },
-
-
     "FireMage": {
         "description": "A mage who attacks with fire",
-        "attacks": {
-            "GoldenHeart": [
-                "Throws a ball of fire at the enemy",
-                150
-            ]
-        },
+        "attacks": {"GoldenHeart": ["Throws a ball of fire at the enemy", 150]},
         "action": ["attack", "defend"],
         "health": 700,
         "defend": {
@@ -89,15 +81,9 @@ DECK = {
             "hit_chance_reduction": 0.25,
         },
     },
-
     "IceWizard": {
         "description": "A wizard who uses ice to slow enemies",
-        "attacks": {
-            "Ice Blast": [
-                "Launches an icy blast at the enemy.",
-                120
-            ]
-        },
+        "attacks": {"Ice Blast": ["Launches an icy blast at the enemy.", 120]},
         "action": ["attack", "defend"],
         "health": 750,
         "defend": {
@@ -179,6 +165,7 @@ DECK = {
     },
 }
 
+
 def draw_card(name=None):
     if name is None:
         name = random.choice(list(DECK))
@@ -209,10 +196,12 @@ def attack(attacker, opponent, attack_name):
     opponent["health"] -= damage
     return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
 
+
 class player:
     def __init__(self, name):
         self.name = name
         self.score = 0
+
 
 class card_dual:
     def __init__(self, name, description, health):
@@ -220,18 +209,29 @@ class card_dual:
         self.description = description
         self.health = health
 
+
 def main():
-    print("Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game")
+    print(
+        "Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game"
+    )
     print("Press y to continue:")
-    while(input()!= 'y'):
+    while input() != "y":
         continue
-    print("----------------------------------------------------------------------------")
-    print("You and your opponent will start the game by each drawing one card from a deck of 10 different characters, each with their own attacks and story")
+    print(
+        "----------------------------------------------------------------------------"
+    )
+    print(
+        "You and your opponent will start the game by each drawing one card from a deck of 10 different characters, each with their own attacks and story"
+    )
     print("You and your opponent will take turns making two options; Attack or Defend.")
-    print("each card has a set number of health that will you must devalue to 0.The first player to defeat 5 characters will be deemed the winner of the game")
+    print(
+        "each card has a set number of health that will you must devalue to 0.The first player to defeat 5 characters will be deemed the winner of the game"
+    )
     print("Enter play to start the game")
-    while input() != 'play':
+    while input() != "play":
+        Print("Something went wrong: Type play")
         continue
+    print("Enter Player 1s name")
     describe(DECK, draw_card()["name"])
 
 
