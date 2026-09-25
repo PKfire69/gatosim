@@ -164,12 +164,44 @@ DECK = {
         },
     },
 }
+def playerturn(player1,player2, attackerhand, opponenthand):
+    print(f"{player1.name}, choose a character to attack or defend with\n your options are {attackerhand['name']}")
+    player1choice = input()
+    while player1choice not in attackerhand:
+        print("please enter a valid name from the given list")
+        print(attackerhand)
+        player1choice = input()
+    for card in attackerhand:
+        if card == 
+    print("do you want to defend(0) or attack(1)")
+    action1 = input()
+    while action1 != "0" and action1 != "1":
+        print("please enter 0 for defend or 1 for attack:")
+        action1 = input()
+    if action1 == "1":
+        print(DECK[player1choice]["attacks"])
+        print('enter the which attack you would like to execute above')
+        attack(input())
+        while attack not in list(DECK[player1choice]['attacks']):
+            print('please type a valid attack from the list below')
+            print(list(DECK[player1choice]['attacks']))
+            attack = input()
+        print('Choose who you want to attack from the list below')
+        print(opponenthand['name'])
+        oppcard = input()
+        while oppcard not in opponenthand:
+            print('Please enter a valid choice from the list above:')
+            oppcard = input()
+        variable = attack(attackerhand[player1choice],opponenthand[oppcard],attack)
+        print(variable)
 
+def is_dead(hand1,hand2):
+    pass
 
 def draw_card(name=None):
     if name is None:
         name = random.choice(list(DECK))
-    card = deepcopy(DECK[name])
+    card = deepcopy(DECK[name   ])
     card["name"] = name
     card["defending"] = False
     return card
@@ -240,43 +272,22 @@ def main():
     describe(DECK, draw_card()["name"])
     keep_playing = True
     while keep_playing:
-        print("Enter Play ones name:")
+        print("Enter player ones name:")
         player1 = player(input())
         print("Enter player twos name:")
         player2 = player(input())
-        hand1 = []
-        hand2 = []
-        for i in range(3):
-            hand1.append(draw_card()["name"])
-            hand2.append(draw_card()["name"])
-        print(f"{player1} you have drawn: {hand1}")
+        hand1 = [draw_card() for _ in range(3)]
+        hand2 = [draw_card() for _ in range(3)]
+        print(f"{player1} you have drawn:")
+        for card in hand1:
+            print(card['name'])
         print("press 1 to continue")
         while input() != "1":
             print("please try again")
             continue
         print(f"{player2} you have drawn: {hand2}")
         while player1.score < 5 and player2.score < 5:
-            print(
-                f"{player1.name}, choose a character to attack or defend with\n your options are {hand1}"
-            )
-            player1choice = input()
-            while player1choice not in hand1:
-                print("Please enter a valid name from the given list")
-                print(hand1)
-                player1choice = input()
-            print("Do you want to defend(0) or attack(1)")
-            action1 = input()
-            while action1 != "0" and action1 != "1":
-                print("please enter 0 for defend or 1 for attack:")
-                action1 = input()
-            if action1 == "1":
-                print(DECK[player1choice]["attacks"])
-            else:
-                print(DECK[player1choice]["defend"])
-
-
-def spew(deck, state):
-    describe(deck, state)
+            playerturn(player1,player2,hand1,hand2)
 
 
 # My teamate and I argued over if we should use a list or a dictionary item within the attacks dictionary. We came to the conclusion that we would use a list and its index to display attack information which will be used in game.
