@@ -298,7 +298,6 @@ def main():
 
 
 def describe(world, state):
-    """Print one state: its description, its exits, and what is there."""
     card = world[state]
     print(state.upper())
     print(card["description"])
