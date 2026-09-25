@@ -207,6 +207,8 @@ class player:
     def __init__(self, name):
         self.name = name
         self.score = 0
+        self.hand = []
+        self.active_card = None
 
 
 class card_dual:
@@ -214,6 +216,45 @@ class card_dual:
         self.name = name
         self.description = description
         self.health = health
+
+
+def choose_card(game_player):
+    print(f"{game_player.name}, choose your active character:")
+    for i in range(3):
+        card = game_player.hand[i]
+        print(f"{i + 1}. {card['name']} — {card['health']} health")
+
+    choice = input("Enter 1, 2, or 3: ").strip()
+    while choice not in ("1", "2", "3"):
+        choice = input("Please enter 1, 2, or 3: ").strip()
+
+    game_player.active_card = game_player.hand[int(choice) - 1]
+
+
+def take_turn(current_player, other_player):
+    card = current_player.active_card
+    opponent = other_player.active_card
+    print(f"{current_player.name}'s turn: {card['name']} ({card['health']} health)")
+    print(f"Opponent: {opponent['name']} ({opponent['health']} health)")
+    action = input("Defend (0) or attack (1): ").strip()
+    while action not in ("0", "1"):
+        action = input("Please enter 0 for defend or 1 for attack: ").strip()
+
+    if action == "0":
+        print(defend(card))
+    else:
+        for name, details in card["attacks"].items():
+            print(f"{name}: {details[0]} ({details[1]} damage)")
+        attack_name = input("Choose an attack by name: ").strip()
+        while attack_name not in card["attacks"]:
+            attack_name = input("Please enter an attack name from the list: ").strip()
+
+        result = attack(card, opponent, attack_name)
+        if result["hit"]:
+            print(f"Hit! {result['damage']} damage.")
+        else:
+            print("The attack missed.")
+        print(f"{opponent['name']} has {opponent['health']} health left.")
 
 
 def main():
@@ -227,52 +268,39 @@ def main():
         "----------------------------------------------------------------------------"
     )
     print(
-        "You and your opponent will start the game by each drawing one card from a deck of 10 different characters, each with their own attacks and story"
+        "Each player draws three cards from a deck of 10 characters and chooses one active character for the battle."
     )
     print("You and your opponent will take turns making two options; Attack or Defend.")
     print(
-        "each card has a set number of health that will you must devalue to 0.The first player to defeat 5 characters will be deemed the winner of the game"
+        "Take turns until one active character reaches 0 health. The other player wins the battle."
     )
     print("Enter play to start the game")
     while input() != "play":
         print("Something went wrong: Type play")
         continue
-    describe(DECK, draw_card()["name"])
-    keep_playing = True
-    while keep_playing:
-        print("Enter Play ones name:")
-        player1 = player(input())
-        print("Enter player twos name:")
-        player2 = player(input())
-        hand1 = []
-        hand2 = []
-        for i in range(3):
-            hand1.append(draw_card()["name"])
-            hand2.append(draw_card()["name"])
-        print(f"{player1} you have drawn: {hand1}")
-        print("press 1 to continue")
-        while input() != "1":
-            print("please try again")
-            continue
-        print(f"{player2} you have drawn: {hand2}")
-        while player1.score < 5 and player2.score < 5:
-            print(
-                f"{player1.name}, choose a character to attack or defend with\n your options are {hand1}"
-            )
-            player1choice = input()
-            while player1choice not in hand1:
-                print("Please enter a valid name from the given list")
-                print(hand1)
-                player1choice = input()
-            print("Do you want to defend(0) or attack(1)")
-            action1 = input()
-            while action1 != "0" and action1 != "1":
-                print("please enter 0 for defend or 1 for attack:")
-                action1 = input()
-            if action1 == "1":
-                print(DECK[player1choice]["attacks"])
-            else:
-                print(DECK[player1choice]["defend"])
+    player1 = player(input("Enter player one's name: "))
+    player2 = player(input("Enter player two's name: "))
+    for i in range(3):
+        player1.hand.append(draw_card())
+        player2.hand.append(draw_card())
+
+    choose_card(player1)
+    choose_card(player2)
+    current_player = player1
+    other_player = player2
+
+    while player1.active_card["health"] > 0 and player2.active_card["health"] > 0:
+        take_turn(current_player, other_player)
+        if other_player.active_card["health"] == 0:
+            print(f"{current_player.name} wins the battle!")
+            break
+
+        if current_player == player1:
+            current_player = player2
+            other_player = player1
+        else:
+            current_player = player1
+            other_player = player2
 
 
 def spew(deck, state):
