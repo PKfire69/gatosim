@@ -164,7 +164,6 @@ DECK = {
         },
     },
 }
-def is_dead(hand1,hand2):
 
 
 def is_dead(hand1, hand2):
