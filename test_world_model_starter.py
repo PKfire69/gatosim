@@ -4,7 +4,7 @@ from contextlib import redirect_stdout
 from unittest.mock import patch
 
 import world_model_starter as game
-from world_model_starter import DECK, attack, defend, draw_card
+from world_model_starter import DECK, attack, draw_card
 
 
 class CombatTests(unittest.TestCase):
@@ -15,8 +15,8 @@ class CombatTests(unittest.TestCase):
                 with self.subTest(character=name, attack=attack_name):
                     attacker = draw_card(name)
                     opponent = draw_card("StoneGolem")
-                    self.assertGreater(attacker["health"], 0)
-                    self.assertTrue(defend(attacker))
+                    self.assertGreater(attacker.health, 0)
+                    self.assertTrue(attacker.defend())
                     with patch("world_model_starter.random.random", return_value=0.0):
                         result = attack(opponent, attacker, "Boulder Slam")
                     self.assertLess(result["hit_chance"], 0.80)
@@ -30,15 +30,15 @@ class CombatTests(unittest.TestCase):
         attacker = draw_card("FireMage")
         unguarded = draw_card("ShadowKnight")
         guarded = draw_card("ShadowKnight")
-        defend(guarded)
+        guarded.defend()
         with patch("world_model_starter.random.random", return_value=0.60):
             ordinary = attack(attacker, unguarded, "GoldenHeart")
             defended = attack(attacker, guarded, "GoldenHeart")
         self.assertTrue(ordinary["hit"])
-        self.assertEqual(unguarded["health"], 850)
+        self.assertEqual(unguarded.health, 850)
         self.assertFalse(defended["hit"])
         self.assertEqual(defended["damage"], 0)
-        self.assertEqual(guarded["health"], 1000)
+        self.assertEqual(guarded.health, 1000)
         self.assertAlmostEqual(defended["hit_chance"], 0.50)
 
     def test_defense_expires_after_either_a_hit_or_a_miss(self):
@@ -46,7 +46,7 @@ class CombatTests(unittest.TestCase):
             with self.subTest(first_roll=first_roll):
                 attacker = draw_card("FireMage")
                 opponent = draw_card("ShadowKnight")
-                defend(opponent)
+                opponent.defend()
                 with patch(
                     "world_model_starter.random.random", side_effect=[first_roll, 0.60]
                 ):
@@ -59,8 +59,8 @@ class CombatTests(unittest.TestCase):
     def test_repeated_defense_does_not_stack(self):
         attacker = draw_card("FireMage")
         opponent = draw_card("ShadowKnight")
-        defend(opponent)
-        defend(opponent)
+        opponent.defend()
+        opponent.defend()
         with patch("world_model_starter.random.random", return_value=0.40):
             result = attack(attacker, opponent, "GoldenHeart")
         self.assertTrue(result["hit"])
@@ -70,25 +70,34 @@ class CombatTests(unittest.TestCase):
         attacker = draw_card("FireMage")
         opponent = draw_card("ShadowKnight")
         another_draw = draw_card("ShadowKnight")
-        defend(opponent)
+        opponent.defend()
         with patch("world_model_starter.random.random", return_value=0.0):
             attack(attacker, opponent, "GoldenHeart")
-        self.assertEqual(opponent["health"], 850)
-        self.assertEqual(another_draw["health"], 1000)
-        self.assertFalse(another_draw["defending"])
+        self.assertEqual(opponent.health, 850)
+        self.assertEqual(another_draw.health, 1000)
+        self.assertFalse(another_draw.defending)
         self.assertEqual(DECK["ShadowKnight"]["health"], 1000)
         self.assertNotIn("defending", DECK["ShadowKnight"])
+
+    def test_attack_lists_are_independent_between_draws_and_deck(self):
+        first = draw_card("FireMage")
+        second = draw_card("FireMage")
+
+        first.attacks["GoldenHeart"][1] = 1
+
+        self.assertEqual(second.attacks["GoldenHeart"][1], 150)
+        self.assertEqual(DECK["FireMage"]["attacks"]["GoldenHeart"][1], 150)
 
     def test_health_stops_at_zero_and_defeated_characters_cannot_act(self):
         attacker = draw_card("FireMage")
         opponent = draw_card("ShadowKnight")
-        opponent["health"] = 10
+        opponent.health = 10
         with patch("world_model_starter.random.random", return_value=0.0):
             result = attack(attacker, opponent, "GoldenHeart")
         self.assertEqual(result["damage"], 10)
-        self.assertEqual(opponent["health"], 0)
+        self.assertEqual(opponent.health, 0)
         with self.assertRaises(ValueError):
-            defend(opponent)
+            opponent.defend()
         with self.assertRaises(ValueError):
             attack(opponent, attacker, "Dark Blade Slash")
         with self.assertRaises(ValueError):
@@ -102,15 +111,15 @@ class TurnTests(unittest.TestCase):
         current.hand.append(draw_card("FireMage"))
         current.hand.append(draw_card("FireMage"))
         current.hand.append(draw_card("ShadowKnight"))
-        current.hand[1]["health"] = 300
+        current.hand[1].health = 300
 
         with patch("builtins.input", side_effect=["wrong", "0", "4", "2"]):
             with redirect_stdout(io.StringIO()):
                 game.choose_card(current)
 
         self.assertIs(current.active_card, current.hand[1])
-        self.assertEqual(current.active_card["health"], 300)
-        self.assertEqual(current.hand[0]["health"], 700)
+        self.assertEqual(current.active_card.health, 300)
+        self.assertEqual(current.hand[0].health, 700)
         self.assertEqual(other.hand, [])
 
     def test_turn_retries_invalid_input_and_applies_defense_and_damage(self):
@@ -123,7 +132,7 @@ class TurnTests(unittest.TestCase):
         with patch("builtins.input", side_effect=["wrong", "0"]):
             with redirect_stdout(output):
                 game.take_turn(other, current)
-        self.assertTrue(other.active_card["defending"])
+        self.assertTrue(other.active_card.defending)
 
         with patch(
             "builtins.input", side_effect=["wrong", "1", "wrong", "GoldenHeart"]
@@ -131,16 +140,16 @@ class TurnTests(unittest.TestCase):
             with patch("world_model_starter.random.random", return_value=0.60):
                 with redirect_stdout(output):
                     game.take_turn(current, other)
-        self.assertEqual(other.active_card["health"], 1000)
-        self.assertFalse(other.active_card["defending"])
+        self.assertEqual(other.active_card.health, 1000)
+        self.assertFalse(other.active_card.defending)
         self.assertIn("miss", output.getvalue().lower())
 
         with patch("builtins.input", side_effect=["1", "GoldenHeart"]):
             with patch("world_model_starter.random.random", return_value=0.60):
                 with redirect_stdout(output):
                     game.take_turn(current, other)
-        self.assertEqual(other.active_card["health"], 850)
-        self.assertEqual(current.active_card["health"], 700)
+        self.assertEqual(other.active_card.health, 850)
+        self.assertEqual(current.active_card.health, 700)
         self.assertIn("150", output.getvalue())
         self.assertIn("850", output.getvalue())
 
@@ -153,8 +162,8 @@ class TurnTests(unittest.TestCase):
             draw_card("FireMage"),
             draw_card("ShadowKnight"),
         ]
-        cards[2]["health"] = 250
-        cards[5]["health"] = 200
+        cards[2].health = 250
+        cards[5].health = 200
         answers = [
             "y",
             "play",
@@ -181,12 +190,12 @@ class TurnTests(unittest.TestCase):
                     with redirect_stdout(output):
                         game.main()
 
-        self.assertEqual(cards[2]["health"], 0)
-        self.assertEqual(cards[5]["health"], 50)
-        self.assertEqual(cards[0]["health"], 700)
-        self.assertEqual(cards[1]["health"], 1000)
-        self.assertEqual(cards[3]["health"], 1000)
-        self.assertEqual(cards[4]["health"], 700)
+        self.assertEqual(cards[2].health, 0)
+        self.assertEqual(cards[5].health, 50)
+        self.assertEqual(cards[0].health, 700)
+        self.assertEqual(cards[1].health, 1000)
+        self.assertEqual(cards[3].health, 1000)
+        self.assertEqual(cards[4].health, 700)
         self.assertIn("Bob", output.getvalue().splitlines()[-1])
 
 

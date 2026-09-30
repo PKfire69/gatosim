@@ -1,3 +1,14 @@
+# Release Notes — Studio Card 7
+
+## Class update
+
+Run the game with `python world_model_starter.py`.
+
+Each card drawn from `DECK` is now a `Card` object with its own health, attacks,
+and defense state. The old `defend(card)` function moved inside the class as
+`card.defend()`. Attack and turn handling use attributes such as `card.health`.
+The battle rules are unchanged.
+
 # Release Notes — v0.1
 
 ## What works
