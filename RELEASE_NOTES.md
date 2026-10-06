@@ -35,3 +35,9 @@ I wanna change how attack details are stored.Right now, every attack uses list w
 code must remember that index 0 means description and that 1 means damage. it makes the code harder to read and easier
 to missuse .
 
+# Release Notes - v0.5:
+
+## What was changed:
+
+- Moved global variable dictionary into a class its own class that is assigned to instance variable called cards on initilization.
+- Created a class called
