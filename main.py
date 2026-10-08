@@ -6,16 +6,20 @@ from copy import deepcopy
 # Every state has the same keys, which is what makes the functions below
 # possible: they can rely on "description" and "exits" being there.
 # ---------------------------------------------------------------------------
-# Names: Parker Karlen, Hamid Eyyubov
+# Names: Parker Karlen, Hamid Eyyubov, Cole Stojevich
+
+"""Studio Card 9: lines 167-170 werea bit confusing because this function inside deck class calls the card class to instantiate an card object"""
 
 
 class Card:
     def __init__(self, name, card_data):
         self.name = name
-        self.description = card_data['description']
-        self.attacks = card_data['attacks']
-        self.health = card_data['health']
+        self.description = card_data["description"]
+        self.attacks = card_data["attacks"]
+        self.health = card_data["health"]
         self.defend = False
+        self.defense_desc = card_data['defend']['description']
+        self.hit_reduction = card_data['defend']['hit_chance_reduction']
 
 class Deck:
     def __init__(self):
@@ -24,7 +28,7 @@ class Deck:
                 "description": "A phantom clad in obsidian armor, he strikes from the city's",
                 "attacks": {
                     "Dark Blade Slash": [
-                        "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trai                l of razor-sharp                        shadow that shatters enemy defenses on impact.",
+                        "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp                                        shadow that shatters enemy defenses on impact.",
                         200,
                     ]
                 },
@@ -160,143 +164,87 @@ class Deck:
             return Card(name, self.cards[name])
 
 
-def defend(card):
-    if card["health"] <= 0:
-        raise ValueError("A defeated character cannot defend.")
-    card["defending"] = True
-    return card["defend"]["description"]
-
-
-def attack(attacker, opponent, attack_name):
-    if attacker["health"] <= 0 or opponent["health"] <= 0:
-        raise ValueError("Both characters must be alive to attack.")
-    attack_damage = attacker["attacks"][attack_name][1]
-    hit_chance = 0.80
-    if opponent.get("defending", False):
-        hit_chance -= opponent["defend"]["hit_chance_reduction"]
-    hit_chance = max(0.0, min(1.0, hit_chance))
-    hit = random.random() < hit_chance
-    opponent["defending"] = False
-    damage = min(attack_damage, opponent["health"]) if hit else 0
-    opponent["health"] -= damage
-    return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
-
 class Game:
+
+    def attack(self, attacker, opponent, attack_name):
+        if attacker.health <= 0 or opponent.health <= 0:
+            raise ValueError("Both characters must be alive to attack.")
+        attack_damage = attacker.attacks[attack_name][1]
+        hit_chance = 0.80
+        if opponent.get("defending", False):
+            hit_chance -= opponent["defend"]["hit_chance_reduction"]
+        hit = random.random() < hit_chance
+        opponent.defending = False
+        damage = min(attack_damage, opponent["health"]) if hit else 0
+        opponent["health"] -= damage
+        return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
+
     
+    def draw_card(self,cards):
+        self.name = random.choice(list(self.cards))
+        return Card(name, self.cards[name])
+
+
+    def __init__(self):
+        print("Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will                effect the outcome of the game")
+        print("Each player draws three cards from a deck of 10 characters and chooses one active character for the battle.")
+        print("You and your opponent will take turns making two options; Attack or Defend.")
+        print("Take turns until one active character reaches 0 health. The other player wins the battle.")
+
+
+    
+
 def promptcontinue(zero):
     while input() != "1":
         print("please try again")
         continue
 
 
-class player:
+class Player:
     def __init__(self, name):
         self.name = name
         self.score = 0
         self.hand = []
         self.active_card = None
 
-    def __str__(self):
+    def choose_card(self, game_player):
+        print(f"{game_player.name}, choose your active character:")
+        print(game_player.hand)
         for i in range(3):
             card = game_player.hand[i]
             print(f"{i + 1}. {card['name']} — {card['health']} health")
+        choice = input("Enter 1, 2, or 3: ").strip()
+        while choice not in ("1", "2", "3"):
+            choice = input("Please enter 1, 2, or 3: ").strip()
+            game_player.active_card = game_player.hand[int(choice) - 1]
 
 
-class card_dual:
-    def __init__(self, name, description, health):
-        self.name = name
-        self.description = description
-        self.health = health
+    def take_turn(self, other_player):
+        card = self.active_card
+        opponent = other_player.active_card
+        print(f"{self.name}'s turn: {card.name} ({card.health} health)")
+        print(f"Opponent: {opponent.name} ({opponent.health} health)")
+        action = input("Defend (0) or attack (1): ").strip()
+        while action not in ("0", "1"):
+            action = input("Please enter 0 for defend or 1 for attack: ").strip()
 
-
-def choose_card(game_player):
-    print(f"{game_player.name}, choose your active character:")
-    print(game_player.hand)
-    for i in range(3):
-        card = game_player.hand[i]
-        print(f"{i + 1}. {card['name']} — {card['health']} health")
-
-    choice = input("Enter 1, 2, or 3: ").strip()
-    while choice not in ("1", "2", "3"):
-        choice = input("Please enter 1, 2, or 3: ").strip()
-
-    game_player.active_card = game_player.hand[int(choice) - 1]
-
-
-def take_turn(current_player, other_player):
-    card = current_player.active_card
-    opponent = other_player.active_card
-    print(f"{current_player.name}'s turn: {card['name']} ({card['health']} health)")
-    print(f"Opponent: {opponent['name']} ({opponent['health']} health)")
-    action = input("Defend (0) or attack (1): ").strip()
-    while action not in ("0", "1"):
-        action = input("Please enter 0 for defend or 1 for attack: ").strip()
-
-    if action == "0":
-        print(defend(card))
-    else:
-        for name, details in card["attacks"].items():
-            print(f"{name}: {details[0]} ({details[1]} damage)")
-        attack_name = input("Choose an attack by name: ").strip()
-        while attack_name not in card["attacks"]:
-            attack_name = input("Please enter an attack name from the list: ").strip()
-
-        result = attack(card, opponent, attack_name)
-        if result["hit"]:
-            print(f"Hit! {result['damage']} damage.")
+        if action == "0":
+            card.defend = True
+            print(card.defend_description)
         else:
-            print("The attack missed.")
-        print(f"{opponent['name']} has {opponent['health']} health left.")
+            for name, details in card["attacks"].items():
+                print(f"{name}: {details[0]} ({details[1]} damage)")
+            attack_name = input("Choose an attack by name: ").strip()
+            while attack_name not in card["attacks"]:
+                attack_name = input("Please enter an attack name from the list: ").strip()
 
+            result = attack(card, opponent, attack_name)
+            if result["hit"]:
+                print(f"Hit! {result['damage']} damage.")
+            else:
+                print("The attack missed.")
+            print(f"{opponent['name']} has {opponent['health']} health left.")
 
-def main():
-    print(
-        "Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game"
-    )
-    print("Press y to continue:")
-    while input() != "y":
-        continue
-    print(
-        "----------------------------------------------------------------------------"
-    )
-    print(
-        "Each player draws three cards from a deck of 10 characters and chooses one active character for the battle."
-    )
-    print("You and your opponent will take turns making two options; Attack or Defend.")
-    print(
-        "Take turns until one active character reaches 0 health. The other player wins the battle."
-    )
-    print("Enter play to start the game")
-    while input() != "play":
-        print("Something went wrong: Type play")
-        continue
-    player1 = player(input("Enter player one's name: "))
-    player2 = player(input("Enter player two's name: "))
-    for i in range(3):
-        player1.hand.append(draw_card())
-        player2.hand.append(draw_card())
-
-    choose_card(player1)
-    choose_card(player2)
-    current_player = player1
-    other_player = player2
-
-    while player1.active_card["health"] > 0 and player2.active_card["health"] > 0:
-        take_turn(current_player, other_player)
-        if other_player.active_card["health"] == 0:
-            print(f"{current_player.name} wins the battle!")
-            break
-
-        if current_player == player1:
-            current_player = player2
-            other_player = player1
-        else:
-            current_player = player1
-            other_player = player2
-
-
-def spew(deck, state):
-    describe(deck, state)
 
 
 # My teamate and I argued over if we should use a list or a dictionary item within the attacks dictionary. We came to the conclusion that we would use a list and its index to display attack information which will be used in game.
@@ -320,4 +268,29 @@ def describe(world, state):
 
 
 if __name__ == "__main__":
-    main()
+     game = Game()
+    print(game)
+    deck = Deck()
+    player1 = Player(input("Enter player one's name: "))
+    player2 = Player(input("Enter player two's name: "))
+    for i in range(3):
+        player1.hand.append(deck.draw_card())
+        player2.hand.append(deck.draw_card())
+
+    choose_card(player1)
+    choose_card(player2)
+    current_player = player1
+    other_player = player2
+
+    while player1.active_card["health"] > 0 and player2.active_card["health"] > 0:
+        take_turn(current_player, other_player)
+        if other_player.active_card["health"] == 0:
+            print(f"{current_player.name} wins the battle!")
+            break
+
+        if current_player == player1:
+            current_player = player2
+            other_player = player1
+        else:
+            current_player = player1
+            other_player = player2
