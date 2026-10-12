@@ -41,3 +41,20 @@ to missuse .
 
 - Moved global variable dictionary into a class its own class that is assigned to instance variable called cards on initilization.
 - Created a class called
+
+# Release Notes
+
+## v0.5
+
+### What I had to change, and why
+
+**The nested dictionary became objects.** In v0.1 every card was a dictionary and the functions reached into it with keys like `card["health"]`. The card data still lives in a dictionary inside `Deck`, but `Deck.draw_card` now builds a `Card` instance from it, so health, the defending flag and the attacks belong to the card itself.
+
+**The global state went away.** `BASE_HIT_CHANCE` is now a class attribute on `Card`, and `Game` owns the deck and the two players. `Game.play()` runs the whole battle, so `main.py` only has to call `Game().play()`. Before, the loop and the setup were loose code at the bottom of the file that passed `current_player` and `other_player` into every function.
+
+**Attack and defend moved onto `Card`.** `Game.attack(attacker, opponent, ...)` took two cards and changed one of them. It is now `card.attack(target, attack_name)`, and defending is `card.defend()`. The old `Card.defend` attribute collided with the idea of a defend action, so the flag is now `defending`. `Game` kept the rules text and the turn loop.
+
+**Inheritance.** `Card` is the base class. `Mage` overrides `hit_chance_against` so its spells only lose half the target's defend bonus. `Guardian` overrides `defend` and calls `super().defend()` before healing 50 health, capped at `max_health`. `Deck.CARD_CLASSES` maps each of the ten characters to its class, so v0.1's roster numbers are unchanged.
+
+**Dunder methods.** `Card.__str__` prints a card as "name - health" in the hand menu. `Card.__lt__` lets `Player.draw_hand` sort a hand with `self.hand.sort()`. `Deck.__len__` lets `draw_card` check `len(self) == 0`, and the empty-deck check reads the same way.
+
