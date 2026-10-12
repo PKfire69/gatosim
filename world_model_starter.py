@@ -32,191 +32,180 @@ from copy import deepcopy
 # Names: Parker Karlen, Hamid Eyyubov
 
 
-BASE_HIT_CHANCE = 0.80
+class Deck:
+    def __init__(self):
+        card_data = {
+            "ShadowKnight": {
+                "description": "A phantom clad in obsidian armor, he strikes from the city's dark alleys before his targets even know he exists. Corrupt warlords whisper his name in fear, knowing no shield can block a blade born of shadow.",
+                "attacks": {
+                    "Dark Blade Slash": [
+                        "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact.",
+                        200,
+                    ],
+                },
+                "action": ["attack", "defend"],
+                "health": 1000,
+                "defend": {
+                    "description": "Merges with the shadows to evade the next attack.",
+                    "hit_chance_reduction": 0.30,
+                },
+                "mode": True,
+            },
+            # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.
+            "Meepo": {
+                "description": "Meepo is a magical cave elf that summons 5 copies of himself to fight from every front.",
+                "attacks": {
+                    "Earth Bind": [
+                        "tosses a net at an enemy stopping them keeping them from play for one turn",
+                        100,
+                    ],
+                    "Divided We Stand": [
+                        "Summons five copies to strike the enemy together.",
+                        160,
+                    ],
+                },
+                "action": ["attack", "defend"],
+                "health": 800,
+                "defend": {
+                    "description": "Creates decoys to confuse the next attacker.",
+                    "hit_chance_reduction": 0.35,
+                },
+            },
+            "FireMage": {
+                "description": "A mage who attacks with fire",
+                "attacks": {"GoldenHeart": ["Throws a ball of fire at the enemy", 150]},
+                "action": ["attack", "defend"],
+                "health": 700,
+                "defend": {
+                    "description": "Raises a wall of flame to obscure the next attack.",
+                    "hit_chance_reduction": 0.25,
+                },
+            },
+            "IceWizard": {
+                "description": "A wizard who uses ice to slow enemies",
+                "attacks": {"Ice Blast": ["Launches an icy blast at the enemy.", 120]},
+                "action": ["attack", "defend"],
+                "health": 750,
+                "defend": {
+                    "description": "Summons a snowstorm to hide from the next attack.",
+                    "hit_chance_reduction": 0.30,
+                },
+            },
+            "StoneGolem": {
+                "description": "An ancient guardian carved from mountain stone.",
+                "attacks": {
+                    "Boulder Slam": [
+                        "Smashes the enemy with a massive stone fist.",
+                        180,
+                    ],
+                },
+                "action": ["attack", "defend"],
+                "health": 1200,
+                "defend": {
+                    "description": "Raises a stone barrier to intercept the next attack.",
+                    "hit_chance_reduction": 0.40,
+                },
+            },
+            "WindArcher": {
+                "description": "A swift archer whose arrows ride the wind.",
+                "attacks": {
+                    "Gale Arrow": ["Fires an arrow carried by a powerful gust.", 140],
+                },
+                "action": ["attack", "defend"],
+                "health": 650,
+                "defend": {
+                    "description": "Dashes aside on a gust of wind to dodge the next attack.",
+                    "hit_chance_reduction": 0.45,
+                },
+            },
+            "ThunderMonk": {
+                "description": "A mountain monk who channels lightning through his fists.",
+                "attacks": {
+                    "Lightning Fist": [
+                        "Strikes the enemy with an electrified punch.",
+                        170,
+                    ],
+                },
+                "action": ["attack", "defend"],
+                "health": 850,
+                "defend": {
+                    "description": "Moves with lightning speed to evade the next attack.",
+                    "hit_chance_reduction": 0.30,
+                },
+            },
+            "ForestGuardian": {
+                "description": "A living tree that protects the creatures of the forest.",
+                "attacks": {
+                    "Vine Lash": ["Whips the enemy with a thorn-covered vine.", 130],
+                },
+                "action": ["attack", "defend"],
+                "health": 1100,
+                "defend": {
+                    "description": "Weaves a screen of branches to block the next attack.",
+                    "hit_chance_reduction": 0.35,
+                },
+            },
+            "SunPaladin": {
+                "description": "A knight who carries a shield bright as the morning sun.",
+                "attacks": {
+                    "Radiant Strike": ["Swings a sword glowing with sunlight.", 160],
+                },
+                "action": ["attack", "defend"],
+                "health": 1000,
+                "defend": {
+                    "description": "Flashes a radiant shield to disrupt the next attack.",
+                    "hit_chance_reduction": 0.40,
+                },
+            },
+            "SeaSerpent": {
+                "description": "A creature of the deep that commands waves and sea mist.",
+                "attacks": {
+                    "Tidal Crash": ["Sends a crushing wave into the enemy.", 190],
+                },
+                "action": ["attack", "defend"],
+                "health": 900,
+                "defend": {
+                    "description": "Disappears into sea mist to evade the next attack.",
+                    "hit_chance_reduction": 0.25,
+                },
+            },
+        }
+        self.cards = []
+        for name, data in card_data.items():
+            self.cards.append(Card(name, data))
 
-DECK = {
-    "ShadowKnight": {
-        "description": "A phantom clad in obsidian armor, he strikes from the city's dark alleys before his targets even know he exists. Corrupt warlords whisper his name in fear, knowing no shield can block a blade born of shadow.",
-        "attacks": {
-            "Dark Blade Slash": [
-                "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact.",
-                200,
-            ],
-        },
-        "action": ["attack", "defend"],
-        "health": 1000,
-        "defend": {
-            "description": "Merges with the shadows to evade the next attack.",
-            "hit_chance_reduction": 0.30,
-        },
-        "mode": True,
-    },
-    # Below is a card that was being worked on this is subject to some changes based on how we want to create gameplay.
-    "Meepo": {
-        "description": "Meepo is a magical cave elf that summons 5 copies of himself to fight from every front.",
-        "attacks": {
-            "Earth Bind": [
-                "tosses a net at an enemy stopping them keeping them from play for one turn",
-                100,
-            ],
-            "Divided We Stand": [
-                "Summons five copies to strike the enemy together.",
-                160,
-            ],
-        },
-        "action": ["attack", "defend"],
-        "health": 800,
-        "defend": {
-            "description": "Creates decoys to confuse the next attacker.",
-            "hit_chance_reduction": 0.35,
-        },
-    },
-    "FireMage": {
-        "description": "A mage who attacks with fire",
-        "attacks": {"GoldenHeart": ["Throws a ball of fire at the enemy", 150]},
-        "action": ["attack", "defend"],
-        "health": 700,
-        "defend": {
-            "description": "Raises a wall of flame to obscure the next attack.",
-            "hit_chance_reduction": 0.25,
-        },
-    },
-    "IceWizard": {
-        "description": "A wizard who uses ice to slow enemies",
-        "attacks": {"Ice Blast": ["Launches an icy blast at the enemy.", 120]},
-        "action": ["attack", "defend"],
-        "health": 750,
-        "defend": {
-            "description": "Summons a snowstorm to hide from the next attack.",
-            "hit_chance_reduction": 0.30,
-        },
-    },
-    "StoneGolem": {
-        "description": "An ancient guardian carved from mountain stone.",
-        "attacks": {
-            "Boulder Slam": ["Smashes the enemy with a massive stone fist.", 180],
-        },
-        "action": ["attack", "defend"],
-        "health": 1200,
-        "defend": {
-            "description": "Raises a stone barrier to intercept the next attack.",
-            "hit_chance_reduction": 0.40,
-        },
-    },
-    "WindArcher": {
-        "description": "A swift archer whose arrows ride the wind.",
-        "attacks": {
-            "Gale Arrow": ["Fires an arrow carried by a powerful gust.", 140],
-        },
-        "action": ["attack", "defend"],
-        "health": 650,
-        "defend": {
-            "description": "Dashes aside on a gust of wind to dodge the next attack.",
-            "hit_chance_reduction": 0.45,
-        },
-    },
-    "ThunderMonk": {
-        "description": "A mountain monk who channels lightning through his fists.",
-        "attacks": {
-            "Lightning Fist": ["Strikes the enemy with an electrified punch.", 170],
-        },
-        "action": ["attack", "defend"],
-        "health": 850,
-        "defend": {
-            "description": "Moves with lightning speed to evade the next attack.",
-            "hit_chance_reduction": 0.30,
-        },
-    },
-    "ForestGuardian": {
-        "description": "A living tree that protects the creatures of the forest.",
-        "attacks": {
-            "Vine Lash": ["Whips the enemy with a thorn-covered vine.", 130],
-        },
-        "action": ["attack", "defend"],
-        "health": 1100,
-        "defend": {
-            "description": "Weaves a screen of branches to block the next attack.",
-            "hit_chance_reduction": 0.35,
-        },
-    },
-    "SunPaladin": {
-        "description": "A knight who carries a shield bright as the morning sun.",
-        "attacks": {
-            "Radiant Strike": ["Swings a sword glowing with sunlight.", 160],
-        },
-        "action": ["attack", "defend"],
-        "health": 1000,
-        "defend": {
-            "description": "Flashes a radiant shield to disrupt the next attack.",
-            "hit_chance_reduction": 0.40,
-        },
-    },
-    "SeaSerpent": {
-        "description": "A creature of the deep that commands waves and sea mist.",
-        "attacks": {
-            "Tidal Crash": ["Sends a crushing wave into the enemy.", 190],
-        },
-        "action": ["attack", "defend"],
-        "health": 900,
-        "defend": {
-            "description": "Disappears into sea mist to evade the next attack.",
-            "hit_chance_reduction": 0.25,
-        },
-    },
-}
+    def __len__(self):
+        return len(self.cards)
 
+    def find_card(self, name):
+        for card in self.cards:
+            if card.name == name:
+                return card
+        raise KeyError(name)
 
-def is_dead(hand1, hand2):
-    pass
-
-
-def draw_card(name=None):
-    if name is None:
-        name = random.choice(list(DECK))
-    return Card(name)
-
-
-def attack(attacker, opponent, attack_name):
-    if attacker.health <= 0 or opponent.health <= 0:
-        raise ValueError("Both characters must be alive to attack.")
-    attack_damage = attacker.attacks[attack_name][1]
-    hit_chance = BASE_HIT_CHANCE
-    if opponent.defending:
-        hit_chance -= opponent.hit_chance_reduction
-    hit_chance = max(0.0, min(1.0, hit_chance))
-    hit = random.random() < hit_chance
-    opponent.defending = False
-    damage = 0
-    if hit:
-        damage = min(attack_damage, opponent.health)
-    opponent.health -= damage
-    return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
-
-
-def promptcontinue(zero):
-    while input() != "1":
-        print("please try again")
-        continue
-
-
-class player:
-    def __init__(self, name):
-        self.name = name
-        self.score = 0
-        self.hand = []
-        self.active_card = None
+    def draw_card(self, name=None):
+        if name is None:
+            card = random.choice(self.cards)
+        else:
+            card = self.find_card(name)
+        return deepcopy(card)
 
 
 class Card:
-    def __init__(self, name):
-        data = deepcopy(DECK[name])
+    def __init__(self, name, card_data):
+        data = deepcopy(card_data)
         self.name = name
         self.description = data["description"]
         self.health = data["health"]
         self.attacks = data["attacks"]
+        self.actions = data["action"]
         self.defense_description = data["defend"]["description"]
         self.hit_chance_reduction = data["defend"]["hit_chance_reduction"]
         self.defending = False
+        self.base_hit_chance = 0.80
+
+    def __str__(self):
+        return f"{self.name} ({self.health} health)"
 
     def defend(self):
         if self.health <= 0:
@@ -224,118 +213,171 @@ class Card:
         self.defending = True
         return self.defense_description
 
+    def attack(self, opponent, attack_name):
+        if self.health <= 0 or opponent.health <= 0:
+            raise ValueError("Both characters must be alive to attack.")
+        attack_damage = self.attacks[attack_name][1]
+        hit_chance = self.base_hit_chance
+        if opponent.defending:
+            hit_chance -= opponent.hit_chance_reduction
+        hit_chance = max(0.0, min(1.0, hit_chance))
+        hit = random.random() < hit_chance
+        opponent.defending = False
+        damage = 0
+        if hit:
+            damage = min(attack_damage, opponent.health)
+        opponent.health -= damage
+        return {"hit": hit, "hit_chance": hit_chance, "damage": damage}
 
-def choose_card(game_player):
-    print(f"{game_player.name}, choose your active character:")
-    for i in range(3):
-        card = game_player.hand[i]
-        print(f"{i + 1}. {card.name} — {card.health} health")
+    # My teamate and I argued over if we should use a list or a dictionary item within the attacks dictionary. We came to the conclusion that we would use a list and its index to display attack information which will be used in game.
 
-    choice = input("Enter 1, 2, or 3: ").strip()
-    while choice not in ("1", "2", "3"):
-        choice = input("Please enter 1, 2, or 3: ").strip()
+    # ---------------------------------------------------------------------------
+    # One function that reads the model. Write yours for your project.
+    # ---------------------------------------------------------------------------
 
-    game_player.active_card = game_player.hand[int(choice) - 1]
+    def describe(self):
+        print(self.name.upper())
+        print(self.description)
+        print("Health:", self.health)
+        print("Actions:", ", ".join(self.actions))
+        for name, details in self.attacks.items():
+            print(f"{name}: {details[0]} ({details[1]} damage)")
+        defended_chance = max(0.0, self.base_hit_chance - self.hit_chance_reduction)
+        print("Defend:", self.defense_description)
+        print(
+            f"Opponent's next hit chance: {self.base_hit_chance:.0%} -> {defended_chance:.0%}"
+        )
 
 
-def take_turn(current_player, other_player):
-    card = current_player.active_card
-    opponent = other_player.active_card
-    print(f"{current_player.name}'s turn: {card.name} ({card.health} health)")
-    print(f"Opponent: {opponent.name} ({opponent.health} health)")
-    action = input("Defend (0) or attack (1): ").strip()
-    while action not in ("0", "1"):
-        action = input("Please enter 0 for defend or 1 for attack: ").strip()
+class TurnAction:
+    def __init__(self, card, opponent):
+        self.card = card
+        self.opponent = opponent
 
-    if action == "0":
-        print(card.defend())
-    else:
-        for name, details in card.attacks.items():
+    def perform(self):
+        if self.card.health <= 0 or self.opponent.health <= 0:
+            raise ValueError("Both characters must be alive to take a turn.")
+
+
+class AttackAction(TurnAction):
+    def perform(self):
+        super().perform()
+        for name, details in self.card.attacks.items():
             print(f"{name}: {details[0]} ({details[1]} damage)")
         attack_name = input("Choose an attack by name: ").strip()
-        while attack_name not in card.attacks:
+        while attack_name not in self.card.attacks:
             attack_name = input("Please enter an attack name from the list: ").strip()
 
-        result = attack(card, opponent, attack_name)
+        result = self.card.attack(self.opponent, attack_name)
         if result["hit"]:
             print(f"Hit! {result['damage']} damage.")
         else:
             print("The attack missed.")
-        print(f"{opponent.name} has {opponent.health} health left.")
+        print(f"{self.opponent.name} has {self.opponent.health} health left.")
+
+
+class DefendAction(TurnAction):
+    def perform(self):
+        super().perform()
+        print(self.card.defend())
+
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.score = 0
+        self.hand = []
+        self.active_card = None
+
+    def choose_card(self):
+        print(f"{self.name}, choose your active character:")
+        for i in range(3):
+            card = self.hand[i]
+            print(f"{i + 1}. {card}")
+
+        choice = input("Enter 1, 2, or 3: ").strip()
+        while choice not in ("1", "2", "3"):
+            choice = input("Please enter 1, 2, or 3: ").strip()
+
+        self.active_card = self.hand[int(choice) - 1]
+
+
+class Game:
+    def __init__(self):
+        self.deck = Deck()
+        self.player1 = None
+        self.player2 = None
+        self.current_player = None
+        self.other_player = None
+
+    def take_turn(self):
+        card = self.current_player.active_card
+        opponent = self.other_player.active_card
+        print(f"{self.current_player.name}'s turn: {card}")
+        print(f"Opponent: {opponent}")
+        action = input("Defend (0) or attack (1): ").strip()
+        while action not in ("0", "1"):
+            action = input("Please enter 0 for defend or 1 for attack: ").strip()
+
+        if action == "0":
+            turn_action = DefendAction(card, opponent)
+        else:
+            turn_action = AttackAction(card, opponent)
+        turn_action.perform()
+
+    def run(self):
+        print(
+            "Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game"
+        )
+        print("Press y to continue:")
+        while input() != "y":
+            continue
+        print(
+            "----------------------------------------------------------------------------"
+        )
+        print(
+            f"Each player draws three cards from a deck of {len(self.deck)} characters and chooses one active character for the battle."
+        )
+        print(
+            "You and your opponent will take turns making two options; Attack or Defend."
+        )
+        print(
+            "Take turns until one active character reaches 0 health. The other player wins the battle."
+        )
+        print("Enter play to start the game")
+        while input() != "play":
+            print("Something went wrong: Type play")
+            continue
+        self.player1 = Player(input("Enter player one's name: "))
+        self.player2 = Player(input("Enter player two's name: "))
+        for i in range(3):
+            self.player1.hand.append(self.deck.draw_card())
+            self.player2.hand.append(self.deck.draw_card())
+
+        self.player1.choose_card()
+        self.player2.choose_card()
+        self.current_player = self.player1
+        self.other_player = self.player2
+
+        while (
+            self.player1.active_card.health > 0 and self.player2.active_card.health > 0
+        ):
+            self.take_turn()
+            if self.other_player.active_card.health == 0:
+                print(f"{self.current_player.name} wins the battle!")
+                break
+
+            if self.current_player == self.player1:
+                self.current_player = self.player2
+                self.other_player = self.player1
+            else:
+                self.current_player = self.player1
+                self.other_player = self.player2
 
 
 def main():
-    print(
-        "Hello, this is not only a card game but a game of chance. You will be pitted against your friend where the choices you make will effect the outcome of the game"
-    )
-    print("Press y to continue:")
-    while input() != "y":
-        continue
-    print(
-        "----------------------------------------------------------------------------"
-    )
-    print(
-        "Each player draws three cards from a deck of 10 characters and chooses one active character for the battle."
-    )
-    print("You and your opponent will take turns making two options; Attack or Defend.")
-    print(
-        "Take turns until one active character reaches 0 health. The other player wins the battle."
-    )
-    print("Enter play to start the game")
-    while input() != "play":
-        print("Something went wrong: Type play")
-        continue
-    player1 = player(input("Enter player one's name: "))
-    player2 = player(input("Enter player two's name: "))
-    for i in range(3):
-        player1.hand.append(draw_card())
-        player2.hand.append(draw_card())
-
-    choose_card(player1)
-    choose_card(player2)
-    current_player = player1
-    other_player = player2
-
-    while player1.active_card.health > 0 and player2.active_card.health > 0:
-        take_turn(current_player, other_player)
-        if other_player.active_card.health == 0:
-            print(f"{current_player.name} wins the battle!")
-            break
-
-        if current_player == player1:
-            current_player = player2
-            other_player = player1
-        else:
-            current_player = player1
-            other_player = player2
-
-
-def spew(deck, state):
-    describe(deck, state)
-
-
-# My teamate and I argued over if we should use a list or a dictionary item within the attacks dictionary. We came to the conclusion that we would use a list and its index to display attack information which will be used in game.
-
-# ---------------------------------------------------------------------------
-# One function that reads the model. Write yours for your project.
-# ---------------------------------------------------------------------------
-
-
-def describe(world, state):
-    card = world[state]
-    print(state.upper())
-    print(card["description"])
-    print("Health:", card["health"])
-    print("Actions:", ", ".join(card["action"]))
-    for name, details in card["attacks"].items():
-        print(f"{name}: {details[0]} ({details[1]} damage)")
-    defended_chance = max(0.0, BASE_HIT_CHANCE - card["defend"]["hit_chance_reduction"])
-    print("Defend:", card["defend"]["description"])
-    print(f"Opponent's next hit chance: {BASE_HIT_CHANCE:.0%} -> {defended_chance:.0%}")
+    Game().run()
 
 
 if __name__ == "__main__":
     main()
-
-
-

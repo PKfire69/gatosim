@@ -37,7 +37,31 @@ to missuse .
 
 # Release Notes - v0.5:
 
-## What was changed:
+## What I had to change, and why
 
-- Moved global variable dictionary into a class its own class that is assigned to instance variable called cards on initilization.
-- Created a class called
+The game now keeps its data and state in objects. `Deck` owns a list of ten
+`Card` objects instead of relying on the global `DECK` dictionary. Drawing a card
+copies one of these objects, so two players can draw the same character without
+sharing health, attacks, or defense state.
+
+`Card` handles its own attacks, defense, and description. `Player` stores a hand
+and selects an active card from it. `Game` owns the deck, players, and turn order,
+and its `run()` method handles the battle. These changes put each operation next
+to the data it uses and remove the need to pass game state between separate
+functions. The game still starts from `world_model_starter.py`.
+
+`AttackAction` and `DefendAction` inherit from `TurnAction`. Both override
+`perform()` and call the parent method to check that both cards are alive before
+performing their own action. This gives the two actions a shared check while
+keeping their different behavior clear.
+
+Two special methods make the objects easier to use: `Card.__str__()` provides a
+readable card summary, and `Deck.__len__()` lets the game use `len(deck)` to count
+its cards. The existing damage, hit chances, card choices, and one-battle rules
+stay the same.
+
+## Looking ahead
+
+A planned `Game.play_tournament()` method would use recursion to resolve the two halves of a tournament bracket; it is not implemented yet.
+The `Deck.find_card()` method checks cards one at a time, so its efficiency will matter as the number of cards grows.
+The `Game.take_turn()` method displays the available attacks each turn, so its efficiency will matter as cards gain more attacks.
