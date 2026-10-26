@@ -1,0 +1,140 @@
+[
+  {
+    "playerName": "hamid",
+    "score": 0,
+    "hand": [
+      {
+        "type": "Mage",
+        "cardName": "FireMage",
+        "charDescription": "A mage who attacks with fire.",
+        "attacks": {
+          "GoldenHeart": [
+            "Throws a ball of fire at the enemy.",
+            150
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 700,
+        "maxHealth": 700,
+        "defending": false,
+        "defense_desc": "Raises a wall of flame to obscure the next attack.",
+        "hit_reduction": 0.25
+      },
+      {
+        "type": "Card",
+        "cardName": "ShadowKnight",
+        "charDescription": "A phantom clad in obsidian armor, he strikes from the city's shadows.",
+        "attacks": {
+          "Dark Blade Slash": [
+            "Coated in dense dark energy, Shadow Knight's blade cuts through the air to leave a trail of razor-sharp shadow that shatters enemy defenses on impact.",
+            200
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 1000,
+        "maxHealth": 1000,
+        "defending": false,
+        "defense_desc": "Merges with the shadows to evade the next attack.",
+        "hit_reduction": 0.3
+      },
+      {
+        "type": "Guardian",
+        "cardName": "SunPaladin",
+        "charDescription": "A knight who carries a shield bright as the morning sun.",
+        "attacks": {
+          "Radiant Strike": [
+            "Swings a sword glowing with sunlight.",
+            160
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 1000,
+        "maxHealth": 1000,
+        "defending": false,
+        "defense_desc": "Flashes a radiant shield to disrupt the next attack.",
+        "hit_reduction": 0.4
+      }
+    ],
+    "active_card": 1
+  },
+  {
+    "playerName": "parker",
+    "score": 0,
+    "hand": [
+      {
+        "type": "Card",
+        "cardName": "Meepo",
+        "charDescription": "Meepo is a magical cave elf that summons 5 copies of himself to fight from every front.",
+        "attacks": {
+          "Earth Bind": [
+            "Tosses a net at an enemy, keeping them from play for one turn.",
+            100
+          ],
+          "Divided We Stand": [
+            "Summons five copies to strike the enemy together.",
+            160
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 600,
+        "maxHealth": 800,
+        "defending": true,
+        "defense_desc": "Creates decoys to confuse the next attacker.",
+        "hit_reduction": 0.35
+      },
+      {
+        "type": "Mage",
+        "cardName": "ThunderMonk",
+        "charDescription": "A mountain monk who channels lightning through his fists.",
+        "attacks": {
+          "Lightning Fist": [
+            "Strikes the enemy with an electrified punch.",
+            170
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 850,
+        "maxHealth": 850,
+        "defending": false,
+        "defense_desc": "Moves with lightning speed to evade the next attack.",
+        "hit_reduction": 0.3
+      },
+      {
+        "type": "Card",
+        "cardName": "WindArcher",
+        "charDescription": "A swift archer whose arrows ride the wind.",
+        "attacks": {
+          "Gale Arrow": [
+            "Fires an arrow carried by a powerful gust.",
+            140
+          ]
+        },
+        "actions": [
+          "attack",
+          "defend"
+        ],
+        "health": 650,
+        "maxHealth": 650,
+        "defending": false,
+        "defense_desc": "Dashes aside on a gust of wind to dodge the next attack.",
+        "hit_reduction": 0.45
+      }
+    ],
+    "active_card": 0
+  }
+]

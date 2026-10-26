@@ -1,0 +1,4 @@
+*.md
+.idea/.name
+.DS_Store
+/.agent
